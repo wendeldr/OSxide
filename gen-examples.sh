@@ -12,6 +12,7 @@ main() {
         override-exception-handler
         device
         allocator
+        blinky
     )
 
     rm -rf src/examples
