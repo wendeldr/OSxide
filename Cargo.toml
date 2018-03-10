@@ -28,7 +28,7 @@ lto = true
 debug = true
 
 [dependencies]
-nrf51 = "0.3.0"
+nrf51 = "0.4.0"
 nrf51-hal = "0.4.1"
 bare-metal = "0.1.1"
 vcell = "0.1.0"

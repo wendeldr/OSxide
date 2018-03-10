@@ -1,6 +1,3 @@
-//! Prints "Hello, world!" on the OpenOCD console using semihosting
-//!
-//! ---
 
 //! ### Pin configuration
 //! * 0 -> LED1 (pin 21)
@@ -32,40 +29,69 @@
 extern crate cortex_m;
 extern crate cortex_m_rt;
 extern crate cortex_m_semihosting;
-
-//device specific svd
-// nrf51 provides interrupts
-// well isn't that nifty
-// hal provides access to gpio pins
 extern crate nrf51_hal as hal;
+extern crate nrf51;
+
+pub use nrf51::*;
+pub use nrf51::interrupt::*;
+
+use hal::gpio::GpioExt;
+use hal::gpio::gpio::Parts;
+use hal::prelude::*;
 
 use core::fmt::Write;
 
 use cortex_m::asm;
 use cortex_m_semihosting::hio;
 
-extern crate nrf51;
-
-pub use nrf51::*;
-pub use nrf51::interrupt::*;
-
-use hal::gpio::gpio::Parts;
-
-fn init() {
-
-}
-
-
 fn main() {
     let mut stdout = hio::hstdout().unwrap();
     writeln!(stdout, "Hello, world!").unwrap();
 
 
-    let button_a = gpio::pin17.into_floating_input();
+    if let Some(p) = nrf51::Peripherals::take() {
+        /* Split GPIO pins */
+        let gpio = p.GPIO.split();
 
-    loop {
-        if button_a.is_high() {
-                writeln!(stdout, "BUTTON!").unwrap();
+        /* Set 2 columns to output to control LED states */
+        let mut led_1 = gpio.pin21.into_push_pull_output();
+        let mut led_2 = gpio.pin22.into_push_pull_output();
+        let mut led_3 = gpio.pin23.into_push_pull_output();
+        let mut led_4 = gpio.pin24.into_push_pull_output();
+
+        /* Configure button GPIOs as inputs */
+        /*the internal resistor needs to be set to pull up*/
+        let button_1 = gpio.pin17.into_pull_up_input();
+        let button_2 = gpio.pin18.into_pull_up_input();
+        let button_3 = gpio.pin19.into_pull_up_input();
+        let button_4 = gpio.pin20.into_pull_up_input();
+
+        loop {
+            if button_1.is_high() {
+                led_1.set_high();
+            } else {
+                led_1.set_low();
+            }
+
+            if button_2.is_high() {
+                led_2.set_high();
+            } else {
+                led_2.set_low();
+            }
+
+            if button_3.is_high() {
+                led_3.set_high();
+            } else {
+                led_3.set_low();
+            }
+
+            if button_4.is_high() {
+                led_4.set_high();
+            } else {
+                led_4.set_low();
+            }
         }
+
+
     }
 }
