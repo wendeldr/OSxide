@@ -21,35 +21,24 @@
 //! * 18 -> P0.15   (mid right header)
 //! * 19 -> P0.14   (mid right header)
 //! * 20 -> P0.13   (mid right header)
-//! * 21 -> P0.12   (mid right header)
+//! *extern crate cortex_m;
 
 #![feature(used)]
 #![no_std]
 
-extern crate cortex_m;
-extern crate cortex_m_rt;
-extern crate cortex_m_semihosting;
-extern crate nrf51_hal as hal;
-extern crate nrf51;
+extern crate nrf51dk;
 
-pub use nrf51::*;
-pub use nrf51::interrupt::*;
-
-use hal::gpio::GpioExt;
-use hal::gpio::gpio::Parts;
-use hal::prelude::*;
+use nrf51dk::cortex_m_semihosting::hio;
+use nrf51dk::hal::prelude::*;
 
 use core::fmt::Write;
 
-use cortex_m::asm;
-use cortex_m_semihosting::hio;
-
 fn main() {
-    let mut stdout = hio::hstdout().unwrap();
+     let mut stdout = hio::hstdout().unwrap();
     writeln!(stdout, "Hello, world!").unwrap();
 
 
-    if let Some(p) = nrf51::Peripherals::take() {
+    if let Some(p) = nrf51dk::Peripherals::take() {
         /* Split GPIO pins */
         let gpio = p.GPIO.split();
 
@@ -95,4 +84,3 @@ fn main() {
 
     }
 }
-

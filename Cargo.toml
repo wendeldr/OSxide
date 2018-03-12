@@ -27,9 +27,12 @@ incremental = false
 lto = true
 debug = true
 
+[lib]
+name="nrf51dk"
+path="src/nrf51dk/lib.rs"
+
+
 [dependencies]
-nrf51 = "0.4.0"
-nrf51-hal = "0.4.1"
 bare-metal = "0.1.1"
 vcell = "0.1.0"
 cast = { version = "0.2.2", default-features = false }
@@ -43,3 +46,12 @@ features = ["abort-on-panic"]
 
 [dependencies.cortex-m-semihosting]
 version = "0.2.0"
+
+
+[dependencies.nrf51]
+features = ["rt"]
+version = "0.4.0"
+
+[dependencies.nrf51-hal]
+features = ["rt"]
+version = "0.4.1"

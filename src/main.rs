@@ -21,77 +21,31 @@
 //! * 18 -> P0.15   (mid right header)
 //! * 19 -> P0.14   (mid right header)
 //! * 20 -> P0.13   (mid right header)
-//! * 21 -> P0.12   (mid right header)
+//! *extern crate cortex_m;
 
 #![feature(used)]
 #![no_std]
 
-extern crate cortex_m;
-extern crate cortex_m_rt;
-extern crate cortex_m_semihosting;
-extern crate nrf51_hal as hal;
-extern crate nrf51;
+extern crate nrf51dk;
 
-pub use nrf51::*;
-pub use nrf51::interrupt::*;
+use nrf51dk::cortex_m_semihosting::hio;
+use nrf51dk::cortex_m;
+use nrf51dk::hal::prelude::*;
 
-use hal::gpio::GpioExt;
-use hal::gpio::gpio::Parts;
-use hal::prelude::*;
+use nrf51dk::{Board, nrf51dk_local};
 
 use core::fmt::Write;
 
-use cortex_m::asm;
-use cortex_m_semihosting::hio;
+
 
 fn main() {
+
     let mut stdout = hio::hstdout().unwrap();
-    writeln!(stdout, "Hello, world!").unwrap();
+    writeln!(stdout, "Main Loop").unwrap();
 
+    // Import is a little jacked up. this should be its own crate
+    let mut board : nrf51dk_local = Board::new("nrf51dk_local");
 
-    if let Some(p) = nrf51::Peripherals::take() {
-        /* Split GPIO pins */
-        let gpio = p.GPIO.split();
-
-        /* Set 2 columns to output to control LED states */
-        let mut led_1 = gpio.pin21.into_push_pull_output();
-        let mut led_2 = gpio.pin22.into_push_pull_output();
-        let mut led_3 = gpio.pin23.into_push_pull_output();
-        let mut led_4 = gpio.pin24.into_push_pull_output();
-
-        /* Configure button GPIOs as inputs */
-        /*the internal resistor needs to be set to pull up*/
-        let button_1 = gpio.pin17.into_pull_up_input();
-        let button_2 = gpio.pin18.into_pull_up_input();
-        let button_3 = gpio.pin19.into_pull_up_input();
-        let button_4 = gpio.pin20.into_pull_up_input();
-
-        loop {
-            if button_1.is_high() {
-                led_1.set_high();
-            } else {
-                led_1.set_low();
-            }
-
-            if button_2.is_high() {
-                led_2.set_high();
-            } else {
-                led_2.set_low();
-            }
-
-            if button_3.is_high() {
-                led_3.set_high();
-            } else {
-                led_3.set_low();
-            }
-
-            if button_4.is_high() {
-                led_4.set_high();
-            } else {
-                led_4.set_low();
-            }
-        }
-
-
-    }
+    board.init();
+    
 }
