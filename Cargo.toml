@@ -27,11 +27,6 @@ incremental = false
 lto = true
 debug = true
 
-[lib]
-name="nrf51dk"
-path="src/nrf51dk/lib.rs"
-
-
 [dependencies]
 bare-metal = "0.1.1"
 vcell = "0.1.0"
