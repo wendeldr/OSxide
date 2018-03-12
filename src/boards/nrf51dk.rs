@@ -68,6 +68,10 @@ impl nrf51dk {
         let mut stdout = hio::hstdout().unwrap();
         writeln!(stdout, "Adding Task").unwrap();
     }
+
+    pub fn service_pending_interrupt() {
+        
+    }
 }
 
 impl Board for nrf51dk {
