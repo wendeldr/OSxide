@@ -1,27 +1,26 @@
 
 #![feature(used)]
-#![no_std]
+#![feature(linkage)]
+#![feature(naked_functions)]
+#![feature(core_intrinsics)] 
 #![feature(asm)]  // for `bkpt!`
+#![no_std]
+extern crate cortex_m_semihosting;
 
+mod chips;
 
-mod boards;
-
-use boards::board::Board;
-use boards::nrf51dk::nrf51dk;
-use boards::nrf51dk::cortex_m_semihosting::hio;
-
-use core::fmt::Write;
+use chips::chip::{Chip};
+use chips::nrf51xxx::{NRF51};
+//use boards::board::Board;
+//use boards::nrf51dk::nrf51dk;
+//use boards::nrf51dk::
 
 
 fn main() {
 
-    let mut stdout = hio::hstdout().unwrap();
-    writeln!(stdout, "Main Loop").unwrap();
-
-    // Import is a little jacked up. this should be its own crate
-    let mut board : nrf51dk = Board::new("nrf51dk");
-
-    board.init();
+    let mut chip: NRF51 = Chip::new();
+    chip.write("Main Loop");
+    chip.init();
 
 
     loop {
