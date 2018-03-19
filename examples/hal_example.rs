@@ -26,10 +26,12 @@
 #![feature(used)]
 #![no_std]
 
-extern crate nrf51dk;
+extern crate nrf51;
+extern crate cortex_m_semihosting;
+extern crate nrf51_hal as hal;
 
-use nrf51dk::cortex_m_semihosting::hio;
-use nrf51dk::hal::prelude::*;
+use cortex_m_semihosting::hio::{self, HStdout};
+use hal::prelude::*;
 
 use core::fmt::Write;
 
@@ -38,7 +40,7 @@ fn main() {
     writeln!(stdout, "Hello, world!").unwrap();
 
 
-    if let Some(p) = nrf51dk::Peripherals::take() {
+    if let Some(p) = nrf51::Peripherals::take() {
         /* Split GPIO pins */
         let gpio = p.GPIO.split();
 

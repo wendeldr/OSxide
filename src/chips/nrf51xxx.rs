@@ -15,9 +15,6 @@ use self::cortex_m::interrupt::{self, Mutex};
 use self::cortex_m_semihosting::hio;
 use core::fmt::Write;
 
-use self::nrf51::{TIMER0, TIMER1, TIMER2};
-
-
 pub struct NRF51 {}
 
 impl NRF51 {
@@ -27,7 +24,9 @@ impl NRF51 {
         self.write("Initializing Devices");
 
         if let Some(p) = nrf51::Peripherals::take() {
-            let mut tim0 = Timer::new(p.TIMER0);
+            //let c: TIMER0 = unsafe{ mem::transmute(p.TIMER2) };
+            //let mut tim0 = Timer::new(c);
+            p.TIMER2.tasks_stop.write(|w| unsafe { w.bits(1) });
         }
     }
 

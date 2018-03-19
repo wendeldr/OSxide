@@ -5,15 +5,13 @@
 #![feature(core_intrinsics)] 
 #![feature(asm)]  // for `bkpt!`
 #![no_std]
+
 extern crate cortex_m_semihosting;
 
 mod chips;
 
 use chips::chip::{Chip};
 use chips::nrf51xxx::{NRF51};
-//use boards::board::Board;
-//use boards::nrf51dk::nrf51dk;
-//use boards::nrf51dk::
 
 
 fn main() {
