@@ -1,12 +1,12 @@
 #![feature(used)]
 #![feature(const_fn)]
 #![no_std]
-#[macro_use( interrupt)]
+#[macro_use(interrupt)]
 
 #[macro_use]
 
 extern crate nrf51;
-extern crate nrf51_hal;
+//extern crate nrf51_hal;
 extern crate cortex_m;
 extern crate cortex_m_semihosting;
 
@@ -14,7 +14,7 @@ extern crate cortex_m_semihosting;
 use cortex_m::interrupt::{Mutex};
 use cortex_m_semihosting::hio::{self, HStdout};
 use nrf51::{GPIOTE};
-use nrf51_hal::gpio::GpioExt::{self};
+//use nrf51_hal::gpio::GpioExt::{self};
 
 use core::cell::RefCell;
 use core::fmt::Write;
@@ -22,12 +22,19 @@ use core::fmt::Write;
 static HSTDOUT: Mutex<RefCell<Option<HStdout>>> = Mutex::new(RefCell::new(None));
 static PERIPH: Mutex<RefCell<Option<nrf51::Peripherals>>> = Mutex::new(RefCell::new(None));
 
-pub static LEDS: [Led; 4] = [Led { i: 21 }, 
-                             Led { i: 22 }, 
-                             Led { i: 23 }, 
-                             Led { i: 24 }];
+pub static LEDS: [Led; 4] = [
+    Led { i: 21 }, 
+    Led { i: 22 }, 
+    Led { i: 23 }, 
+    Led { i: 24 }
+    ];
 
-pub static BUTTONS: [Button; 4] = [Button { i: 17 }, Button { i: 18 }, Button { i: 19 }, Button { i: 20 }];
+pub static BUTTONS: [Button; 4] = [
+    Button { i: 17 }, 
+    Button { i: 18 }, 
+    Button { i: 19 }, 
+    Button { i: 20 }
+    ];
 
 
 fn main() {
@@ -56,8 +63,7 @@ fn main() {
 }
 
 pub struct Board {
-    //buttons: Buttons,
-    //leds: Leds,
+
 }
 
 impl Board {
@@ -84,7 +90,6 @@ impl Board {
             let p = nrf51::Peripherals::take().unwrap(); // todo don't unwrap
 
             // lets borrow Peripherals
-            //*GPIO.borrow(cs).borrow_mut() = Some(p.GPIOTE);
             *PERIPH.borrow(cs).borrow_mut() = Some(p);
         });
 

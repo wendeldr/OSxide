@@ -13,8 +13,8 @@ impl microbit {
 }
 
 impl Board for microbit {
-    fn new(name: &'static str) -> microbit {
-        microbit { name: name}
+    fn new( ) -> microbit {
+        microbit { }
     }
 
     

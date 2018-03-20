@@ -3,5 +3,5 @@
 
 
 pub trait Board {
-     fn new(name: &'static str) -> Self;
+     fn new( ) -> Self;
 }

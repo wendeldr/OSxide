@@ -1,97 +1,76 @@
 
-#[allow(non_camel_case_types)]
-#[macro_use(exception)]
-#[macro_use(interrupt)]
+
+extern crate nrf51;
+extern crate nrf51_hal;
+extern crate cortex_m;
+extern crate cortex_m_semihosting;
 
 
 use boards::board::Board;
-//use boards::interupts;
-
-/// (DOCS cotex_m)[https://docs.rs/cortex-m/0.4.3/cortex_m/]
-pub extern crate cortex_m;
-pub extern crate cortex_m_rt;
-pub extern crate cortex_m_semihosting;
-
-// Provides HAL
-extern crate nrf51_hal as hal;
-extern crate nrf51;
-
-// Provides hardware
-pub use self::nrf51::*;
-pub use self::nrf51::{Peripherals};
-
-use self::hal::gpio::GpioExt;
-
-use self::cortex_m::interrupt::{self, Mutex};
-use self::cortex_m::asm;
-use self::cortex_m_semihosting::hio::{self, HStdout};
-
+use cortex_m_semihosting::hio::{HStdout};
+use nrf51::{GPIOTE};
+use cortex_m::interrupt::{Mutex};
+//use nrf51_hal::gpio::GpioExt::{self};
 
 
 use core::cell::RefCell;
 use core::fmt::Write;
 
-//static GPIO: Mutex<RefCell<Option<nrf51::GPIOTE>>> = Mutex::new(RefCell::new(None));
-//static NVIC: Mutex<RefCell<Option<cortex_m::peripheral::NVIC>>> = Mutex::new(RefCell::new(None));
+//mod peripherals;
+use boards::peripherals::leds::Led;
 
-pub struct nrf51dk { name: &'static str }
+pub static HSTDOUT: Mutex<RefCell<Option<HStdout>>> = Mutex::new(RefCell::new(None));
+pub static PERIPH: Mutex<RefCell<Option<nrf51::Peripherals>>> = Mutex::new(RefCell::new(None));
+
+pub static LEDS: [Led; 4] = [
+    Led { i: 21 }, 
+    Led { i: 22 }, 
+    Led { i: 23 }, 
+    Led { i: 24 }
+    ];
+/*
+pub static BUTTONS: [Button; 4] = [
+    Button { i: 17 }, 
+    Button { i: 18 }, 
+    Button { i: 19 }, 
+    Button { i: 20 }
+    ];
+ */
+pub struct Nrf51dk {
+
+}
 
 
-impl nrf51dk {
-
+impl Nrf51dk {
     // What to do when the board comes up
-    pub fn init(&self) {
-        let mut stdout = hio::hstdout().unwrap();
-        writeln!(stdout, "Initializing devices").unwrap();
+    pub fn init(&self) -> Self {
+        cortex_m::interrupt::free(|cs| {
 
-        nrf51dk::enable_interrupts();
+            let hstdout = HSTDOUT.borrow(cs);
 
-        nrf51dk::setup_buttons();
+            if let Some(hstdout) = hstdout.borrow_mut().as_mut() {
+                writeln!(*hstdout, "NRF51Dk Initialization").ok();
+            }
 
-        nrf51dk::set_clock(); 
-
-        //Initialize clock
-
-        //set interupts
-
-        //enable interrupts
-
-    }
-
-    fn enable_interrupts() {
-        if let Some(global_p) = cortex_m::peripheral::Peripherals::take() {
-            interrupt::free( |cs| {
-                let mut nvic = global_p.NVIC;
-                //ADD INTERUPTS HERE
-                nvic.enable(Interrupt::TIMER2);
-                *NVIC.borrow(cs).borrow_mut() = Some(nvic);
-            });
-        }
-
-    }
-
-    fn set_clock() {
-        if let Some(global_p) = cortex_m::peripheral::Peripherals::take() {
-            interrupt::free( |cs| {
-                // systick does not exist
-            });
-        }
-    }
-
-    fn setup_buttons() {
-        if let Some(p) = Peripherals::take() {
-              /* Split GPIO pins */
-            let gpio = p.GPIO.split();
-
-            /* Configure button GPIOs as inputs */
+            /* Initilize the interrupts */
+            // TODO should the device structs handle these?
+            let mut cp = cortex_m::Peripherals::take().unwrap();
+            cp.NVIC.enable(nrf51::Interrupt::GPIOTE);
+            cp.NVIC.clear_pending(nrf51::Interrupt::GPIOTE);
             
-            /*the internal resistor needs to be set to pull up*/
-            gpio.pin17.into_pull_up_input();
-            gpio.pin18.into_pull_up_input();
-            gpio.pin19.into_pull_up_input();
-            gpio.pin20.into_pull_up_input();
 
-        }
+            let p = nrf51::Peripherals::take().unwrap(); // todo don't unwrap
+            // lets borrow Peripherals
+            *PERIPH.borrow(cs).borrow_mut() = Some(p);
+
+        });
+
+        Led::init();
+       
+
+        //TODO not sure if this is necessary
+        Nrf51dk{ }
+
     }
 
 
@@ -100,9 +79,9 @@ impl nrf51dk {
     }
 }
 
-impl Board for nrf51dk {
-    fn new(name: &'static str) -> nrf51dk {
-        nrf51dk { name: name}
+impl Board for Nrf51dk {
+    fn new( ) -> Nrf51dk {
+        Nrf51dk { }
     }
 }
 

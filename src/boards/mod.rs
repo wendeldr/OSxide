@@ -1,5 +1,7 @@
 
-//pub mod nrf51dk;
+pub mod nrf51dk;
 pub mod board;
 pub mod print;
-//mod interupts;
+pub mod peripherals;
+
+pub use self::nrf51dk::PERIPH;

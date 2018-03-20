@@ -4,20 +4,24 @@
 #![feature(naked_functions)]
 #![feature(core_intrinsics)] 
 #![feature(asm)]  // for `bkpt!`
+#![allow(dead_code)]
 #![no_std]
+#[macro_use(interrupt)]
 
-
-// EXTERNAL LIBS
-extern crate cortex_m_semihosting;
+extern crate nrf51;
+//extern crate nrf51_hal;
 extern crate cortex_m;
+extern crate cortex_m_semihosting;
 
 // INTERNAL MODS
-mod chips;
+//mod chips;
 mod tasks;
 mod boards;
 
-use chips::chip::{Chip};
-use chips::nrf51xxx::{NRF51};
+use boards::board::{Board};
+use boards::nrf51dk::{Nrf51dk, LEDS};
+//use chips::chip::{Chip};
+//use chips::nrf51xxx::{NRF51};
 use tasks::*;
 
 // TYPE DEFS
@@ -95,7 +99,8 @@ pub fn os_yeild() {
 }
 
 fn main() {
-    let chip: NRF51 = NRF51::new();
-    chip.init();
+    let board: Nrf51dk = Nrf51dk::new();
+    board.init();
+    //LEDS[2].on();
     os_switch();
 }
