@@ -6,20 +6,22 @@
 #![feature(asm)]  // for `bkpt!`
 #![no_std]
 
+
+// EXTERNAL LIBS
 extern crate cortex_m_semihosting;
 extern crate cortex_m;
 
-use cortex_m::interrupt::{self, Mutex};
-
+// INTERNAL MODS
 mod chips;
 mod tasks;
 mod boards;
 
 use chips::chip::{Chip};
 use chips::nrf51xxx::{NRF51};
-use tasks::task1::{task1};
+use tasks::*;
 
-
+// TYPE DEFS
+#[derive(PartialEq, Clone)]
 pub enum Semaphore {
     Button1,
     Button2,
@@ -28,20 +30,72 @@ pub enum Semaphore {
 }
 
 struct TaskControlBlock {
-    tid: u32,
     sem: Option<Semaphore>,
-    task: fn(Semaphore) -> ()
+    task: fn(Option<Semaphore>) -> ()
 }
 
-static OS_SEM: Option<Semaphore> = None;
-static CURR_TID: u32 = 0;
-static OS_TASKS: [TaskControlBlock; 1] = [
-    TaskControlBlock { tid: 1, sem: None, task: task1}
+// OS GLOBALS
+const NUM_TASKS: usize = 4;
+static mut OS_SEM: Option<Semaphore> = None;
+static mut CURR_TID: usize = NUM_TASKS - 1;
+static mut OS_TASKS: [TaskControlBlock; NUM_TASKS] = [
+    TaskControlBlock { sem: None, task: post_b1_task::post_b1 },
+    TaskControlBlock { sem: None, task: task1::task1 },
+    TaskControlBlock { sem: None, task: task2::task2 },
+    TaskControlBlock { sem: None, task: task3::task3 }
 ];
 
+// OS OPERATIONS
+fn os_switch() {
+    for tid in (0..NUM_TASKS).rev() {
+        unsafe {
+            let task_in_question = &OS_TASKS[tid as usize];
+            // if the task in question is waiting on something
+            if let Some(ref task_sem) = task_in_question.sem {
+                // if an sempahore has been posted
+                if let Some(ref os_sem) = OS_SEM {
+                    // if the posted semaphore is being waited on
+                    // by the task in question
+                    if *os_sem == *task_sem {
+                        // task in question is no longer waiting on a sem
+                        OS_TASKS[tid] =
+                            TaskControlBlock { sem: None, ..*task_in_question };
+                        CURR_TID = tid;
+                        let os_sem_clone = os_sem.clone();
+                        OS_SEM = None; // TODO should we leave the sem?
+                        return (task_in_question.task)(Some(os_sem_clone));
+                    }
+                }
+            } else {
+                CURR_TID = tid;
+                return (task_in_question.task)(OS_SEM.clone());
+            }
+        }
+    }
+}
+
+pub fn os_wait(sem: Semaphore) {
+    unsafe {
+        let curr_task = &OS_TASKS[CURR_TID];
+        OS_TASKS[CURR_TID] = TaskControlBlock { sem: Some(sem), ..*curr_task };
+    }
+    return os_yeild();
+}
+
+pub fn os_post(sem: Semaphore) {
+    // TODO should this be critical?
+    unsafe {
+        OS_SEM = Some(sem)
+    }
+    os_yeild();
+}
+
+pub fn os_yeild() {
+    return os_switch();
+}
+
 fn main() {
-    let mut chip: NRF51 = NRF51::new();
-    chip.write("Main Loop");
+    let chip: NRF51 = NRF51::new();
     chip.init();
-    let tasks = (OS_TASKS[0].task)(Semaphore::Button1);
+    os_switch();
 }
