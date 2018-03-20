@@ -18,7 +18,6 @@ use cortex_m_semihosting::hio::{self, HStdout};
 use nrf51::{Interrupt, GPIOTE};
 use nrf51_hal::gpio::GpioExt;
 
-
 use cortex_m::peripheral::Peripherals;
 use core::cell::RefCell;
 use core::fmt::Write;
@@ -47,34 +46,70 @@ fn main() {
         /* Enable external GPIO interrupts */
         cp.NVIC.enable(nrf51::Interrupt::GPIOTE);
         cp.NVIC.clear_pending(nrf51::Interrupt::GPIOTE);
+        
+        let gpio = p.GPIO.split();
+
+
+        let _ = gpio.pin17.into_pull_up_input();
+        let _ = gpio.pin18.into_pull_up_input();
+        let _ = gpio.pin19.into_pull_up_input();
+        let _ = gpio.pin20.into_pull_up_input();
+        
+        *GPIO.borrow(cs).borrow_mut() = Some(p.GPIOTE);
+        //PERIPH.borrow(cs).borrow_mut() = Some(p);
 
         /* Split GPIO pins */
-        let gpio = p.GPIO.split();
 
         /* Configure button GPIOs as inputs */
         //let _ = gpio.pin26.into_floating_input();
         //let _ = gpio.pin17.into_floating_input();
 
-        let _ = gpio.pin17.into_pull_up_input();
-        let _ = gpio.pin18.into_pull_up_input();
+        //let gpio = p.GPIO.split();
+        Buttons::setup();
 
-
-        /* Set up GPIO 17 (button A) to generate an interrupt when pulled down */
-        p.GPIOTE.config[0].write(|w| unsafe { w.mode().event().psel().bits(17).polarity().lo_to_hi()});
-        p.GPIOTE.intenset.write(|w| w.in0().set_bit());
-        p.GPIOTE.events_in[0].write(|w| unsafe { w.bits(0) });
-
-        /* Set up GPIO 18 (button B) to generate an interrupt when pulled down */
-        p.GPIOTE.config[1].write(|w| unsafe { w.mode().event().psel().bits(18).polarity().lo_to_hi()});
-        p.GPIOTE.intenset.write(|w| w.in1().set_bit());
-        p.GPIOTE.events_in[1].write(|w| unsafe { w.bits(0) });
-
-        *GPIO.borrow(cs).borrow_mut() = Some(p.GPIOTE);
     });
 }
 
 
+pub struct Buttons {
 
+}
+
+impl Buttons {
+
+    fn setup() {
+
+        //Interrupt free zone!
+        cortex_m::interrupt::free(|cs| {
+            //cs can only be called in here and ensures that
+            // we can't be interrupted
+            if let Some(gpiote) = GPIO.borrow(cs).borrow().as_ref() {
+                //if we were sucessfull we should have just borrowed p.gpiote
+
+                /* Set up GPIO 17 (button 1) to generate an interrupt when pulled down */
+                gpiote.config[0].write(|w| unsafe { w.mode().event().psel().bits(17).polarity().lo_to_hi()});
+                gpiote.intenset.write(|w| w.in0().set_bit());
+                gpiote.events_in[0].write(|w| unsafe { w.bits(0) });
+
+                /* Set up GPIO 18 (button 2) to generate an interrupt when pulled down */
+                gpiote.config[1].write(|w| unsafe { w.mode().event().psel().bits(18).polarity().lo_to_hi()});
+                gpiote.intenset.write(|w| w.in1().set_bit());
+                gpiote.events_in[1].write(|w| unsafe { w.bits(0) });
+
+                /* Set up GPIO 19 (button 3) to generate an interrupt when pulled down */
+                gpiote.config[2].write(|w| unsafe { w.mode().event().psel().bits(19).polarity().lo_to_hi()});
+                gpiote.intenset.write(|w| w.in2().set_bit());
+                gpiote.events_in[2].write(|w| unsafe { w.bits(0) });
+
+                /* Set up GPIO 18 (button 4) to generate an interrupt when pulled down */
+                gpiote.config[3].write(|w| unsafe { w.mode().event().psel().bits(20).polarity().lo_to_hi()});
+                gpiote.intenset.write(|w| w.in3().set_bit());
+                gpiote.events_in[3].write(|w| unsafe { w.bits(0) });
+
+            }
+        });
+    }
+}
 
 
 /* Define an exception, i.e. function to call when exception occurs. Here if we receive an
@@ -85,8 +120,10 @@ fn printbuttons() {
     /* Enter critical section */
     cortex_m::interrupt::free(|cs| {
         if let Some(gpiote) = GPIO.borrow(cs).borrow().as_ref() {
-            let buttonapressed = gpiote.events_in[0].read().bits() != 0;
-            let buttonbpressed = gpiote.events_in[1].read().bits() != 0;
+            let button1 = gpiote.events_in[0].read().bits() != 0;
+            let button2 = gpiote.events_in[1].read().bits() != 0;
+            let button3 = gpiote.events_in[2].read().bits() != 0;
+            let button4 = gpiote.events_in[3].read().bits() != 0;
 
             /* Print buttons to the serial console */
             let hstdout = HSTDOUT.borrow(cs);
@@ -96,12 +133,18 @@ fn printbuttons() {
 
             if let Some(hstdout) = hstdout.borrow_mut().as_mut() {
 
-                writeln!(*hstdout, "button press").ok();
+                writeln!(*hstdout, "button press {}", button1).ok();
+                writeln!(*hstdout, "button press {}", button2).ok();
+                writeln!(*hstdout, "button press {}", button3).ok();
+                writeln!(*hstdout, "button press {}", button4).ok();
+                writeln!(*hstdout, "\n").ok();
             }
 
             /* Clear events */
             gpiote.events_in[0].write(|w| unsafe { w.bits(0) });
             gpiote.events_in[1].write(|w| unsafe { w.bits(0) });
+            gpiote.events_in[2].write(|w| unsafe { w.bits(0) });
+            gpiote.events_in[3].write(|w| unsafe { w.bits(0) });
         }
     });
 }

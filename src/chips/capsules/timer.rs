@@ -15,7 +15,7 @@ impl Timer {
 
     fn start(&mut self) {
         // todo
-        self.timer.
+        //self.timer.
     }
 
     fn stop(&mut self) {
