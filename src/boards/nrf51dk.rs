@@ -36,6 +36,7 @@ pub static BUTTONS: [Button; 4] = [
     Button { i: 20 }
     ];
  */
+
 pub struct Nrf51dk {
 
 }
@@ -82,6 +83,14 @@ impl Nrf51dk {
 impl Board for Nrf51dk {
     fn new( ) -> Nrf51dk {
         Nrf51dk { }
+    }
+
+    fn led_on(&self, i: usize) {
+        LEDS[i].on();
+    }
+
+    fn led_off(&self, i: usize) {
+        LEDS[i].off();
     }
 }
 

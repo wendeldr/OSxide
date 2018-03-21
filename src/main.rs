@@ -19,7 +19,7 @@ mod tasks;
 mod boards;
 
 use boards::board::{Board};
-use boards::nrf51dk::{Nrf51dk, LEDS};
+use boards::nrf51dk::{Nrf51dk};
 //use chips::chip::{Chip};
 //use chips::nrf51xxx::{NRF51};
 use tasks::*;
@@ -101,6 +101,6 @@ pub fn os_yeild() {
 fn main() {
     let board: Nrf51dk = Nrf51dk::new();
     board.init();
-    //LEDS[2].on();
+    board.led_on(1);
     os_switch();
 }
