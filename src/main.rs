@@ -6,10 +6,11 @@
 #![feature(asm)]  // for `bkpt!`
 #![allow(dead_code)]
 #![no_std]
+
 #[macro_use(interrupt)]
 
 extern crate nrf51;
-//extern crate nrf51_hal;
+
 extern crate cortex_m;
 extern crate cortex_m_semihosting;
 
@@ -20,8 +21,7 @@ mod boards;
 
 use boards::board::{Board};
 use boards::nrf51dk::{Nrf51dk};
-//use chips::chip::{Chip};
-//use chips::nrf51xxx::{NRF51};
+
 use tasks::*;
 
 // TYPE DEFS
@@ -48,6 +48,7 @@ static mut OS_TASKS: [TaskControlBlock; NUM_TASKS] = [
     TaskControlBlock { sem: None, task: task2::task2 },
     TaskControlBlock { sem: None, task: task3::task3 }
 ];
+
 
 // OS OPERATIONS
 fn os_switch() {
