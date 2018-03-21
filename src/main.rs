@@ -72,7 +72,7 @@ fn os_switch() {
                 }
             } else {
                 CURR_TID = tid;
-                return (task_in_question.task)(OS_SEM.clone());
+                return (task_in_question.task)(None);
             }
         }
     }
