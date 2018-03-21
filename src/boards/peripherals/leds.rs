@@ -12,7 +12,7 @@ pub struct Led {
 }
 
 impl Led {
-    pub fn init() {
+    pub fn init()  {
         cortex_m::interrupt::free(|cs| {
             if let Some(p) = PERIPH.borrow(cs).borrow().as_ref() {
                 
