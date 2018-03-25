@@ -1,16 +1,16 @@
 
 extern crate nrf51;
-extern crate nrf51_hal;
 extern crate cortex_m;
 extern crate cortex_m_semihosting;
+extern crate cortex_m_rt;
 
 
 use boards::board::Board;
 use cortex_m_semihosting::hio::{HStdout};
 use nrf51::{GPIOTE};
-use cortex_m::interrupt::{Mutex};
-//use nrf51_hal::gpio::GpioExt::{self};
 
+use cortex_m::interrupt::{self, Mutex};
+use cortex_m::asm::bkpt;
 
 use core::cell::RefCell;
 use core::fmt::Write;
@@ -95,33 +95,4 @@ impl Board for Nrf51dk {
     fn led_off(&self, i: usize) {
         LEDS[i].off();
     }
-}
-
-interrupt!(GPIOTE, button_irq_handler);
-fn button_irq_handler() {
-    /* Enter critical section */
-    cortex_m::interrupt::free(|cs| {
-        if let Some(p) = PERIPH.borrow(cs).borrow().as_ref() {
-
-            let button1 = p.GPIOTE.events_in[0].read().bits() != 0;
-            let button2 = p.GPIOTE.events_in[1].read().bits() != 0;
-            let button3 = p.GPIOTE.events_in[2].read().bits() != 0;
-            let button4 = p.GPIOTE.events_in[3].read().bits() != 0;
-
-
-
-            let hstdout = HSTDOUT.borrow(cs);
-
-            if let Some(hstdout) = hstdout.borrow_mut().as_mut() {
-                writeln!(*hstdout, "button1 {} - button2 {} - button3 {} - button4 {}", button1, button2, button3, button4).ok();
-            }
-
-            //clear button 1 events
-            p.GPIOTE.events_in[0].write(|w| unsafe { w.bits(0) });
-            p.GPIOTE.events_in[1].write(|w| unsafe { w.bits(0) });
-            p.GPIOTE.events_in[2].write(|w| unsafe { w.bits(0) });
-            p.GPIOTE.events_in[3].write(|w| unsafe { w.bits(0) });
-
-        }
-    });
 }

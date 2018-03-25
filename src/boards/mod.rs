@@ -4,6 +4,7 @@ pub mod board;
 pub mod print;
 pub mod peripherals;
 
+pub mod interrupt;
 /* 
     TODO fix this
     This exposes a statically assigned singleton for maniuplating

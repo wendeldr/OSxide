@@ -9,20 +9,28 @@
 
 #[macro_use(interrupt)]
 
-extern crate nrf51;
 
+extern crate nrf51;
 extern crate cortex_m;
 extern crate cortex_m_semihosting;
+extern crate cortex_m_rt;
+//use cortex_m::asm::bkpt;
 
 // INTERNAL MODS
 //mod chips;
-mod tasks;
-mod boards;
 
+mod boards;
+//use boards::interrupt;
 use boards::board::{Board};
 use boards::nrf51dk::{Nrf51dk};
+use boards::interrupt::Interrupt;
+
+mod tasks;
+
+
 
 use tasks::*;
+
 
 // TYPE DEFS
 #[derive(PartialEq, Clone)]
@@ -103,5 +111,9 @@ fn main() {
     let board: Nrf51dk = Nrf51dk::new();
     board.init();
     board.led_on(1);
-    os_switch();
+    //os_switch();
 }
+
+// For some reason I can only hit this in the main file
+interrupt!(GPIOTE, Interrupt::GPIOTE_IRQHandler);
+
