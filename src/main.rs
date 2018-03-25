@@ -81,7 +81,7 @@ fn os_switch() {
                 }
             } else {
                 CURR_TID = tid;
-                return (task_in_question.task)(OS_SEM.clone());
+                return (task_in_question.task)(None);
             }
         }
     }
@@ -111,9 +111,9 @@ fn main() {
     let board: Nrf51dk = Nrf51dk::new();
     board.init();
     board.led_on(1);
-    //os_switch();
+    os_switch();
 }
+
 
 // For some reason I can only hit this in the main file
 interrupt!(GPIOTE, Interrupt::GPIOTE_IRQHandler);
-
