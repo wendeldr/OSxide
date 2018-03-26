@@ -111,10 +111,11 @@ fn main() {
     let board: Nrf51dk = Nrf51dk::new();
     board.init();
     board.led_on(1);
-    os_switch();
+    //os_switch();
 }
 
 
 //The intterupts need to be enabled here
 //TODO move these to a library
 interrupt!(GPIOTE, Interrupt::GPIOTE_IRQHandler);
+interrupt!(TIMER0, Interrupt::TIMER0_IRQHandler);
