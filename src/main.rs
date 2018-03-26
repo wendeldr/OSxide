@@ -138,3 +138,6 @@ fn interrupt_handler() {
         BOARD.interrupt.GPIOTE_IRQHandler();
     }
 }
+//interrupt!(GPIOTE, Interrupt::GPIOTE_IRQHandler);
+//interrupt!(TIMER0, Interrupt::TIMER0_IRQHandler);
+ 

@@ -16,6 +16,8 @@ use core::fmt::Write;
 //mod peripherals;
 use boards::peripherals::leds::Led;
 use boards::peripherals::buttons::Button;
+use boards::peripherals::timers::Timer;
+
 
 use boards::interrupt::{Interrupt};
 
@@ -60,6 +62,10 @@ impl Nrf51dk {
             let mut cp = cortex_m::Peripherals::take().unwrap();
             cp.NVIC.enable(nrf51::Interrupt::GPIOTE);
             cp.NVIC.clear_pending(nrf51::Interrupt::GPIOTE);
+            cp.NVIC.enable(nrf51::Interrupt::TIMER0);
+            cp.NVIC.clear_pending(nrf51::Interrupt::TIMER0);
+
+            
 
             let p = nrf51::Peripherals::take().unwrap(); // todo don't unwrap
             // lets borrow Peripherals
@@ -69,6 +75,9 @@ impl Nrf51dk {
 
         Led::init();
         Button::init();
+
+        let delay: u32 = 2 * 1000000; // five second delay
+        Timer::init(delay);
 
         //TODO not sure if this is necessary
         //Nrf51dk{ interrupt: Interrupt::new() }

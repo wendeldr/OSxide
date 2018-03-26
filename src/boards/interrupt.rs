@@ -37,6 +37,7 @@ impl Interrupt {
                         self.set_button_pending_interrupt(i);
                      }
 
+                     // clear the events
                      p.GPIOTE.events_in[i].write(|w| unsafe { w.bits(0) });
                 }
             }
@@ -45,8 +46,16 @@ impl Interrupt {
 
     #[allow(non_snake_case)]
     pub fn TIMER0_IRQHandler() {
-        cortex_m::interrupt::free(|_cs| {
-            bkpt();
+        cortex_m::interrupt::free(|cs| {
+            if let Some(p) = PERIPH.borrow(cs).borrow().as_ref() {
+
+                /*Do Something*/
+
+                // clear the register
+                p.TIMER0.tasks_clear.write(|w| unsafe { w.bits(1) });
+                // clear the event
+                p.TIMER0.events_compare[0].write(|w| unsafe { w.bits(0) });
+            }
         });
     }
 

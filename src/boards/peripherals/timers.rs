@@ -7,9 +7,9 @@ pub struct Timer {
 }
 
 impl Timer {
-    pub fn set_timer(us: u32) {
+    pub fn init(us: u32) {
         cortex_m::interrupt::free(|cs| {
-            if let Some(p) = PERIPH.borrow(_cs).borrow().as_ref() {
+            if let Some(p) = PERIPH.borrow(cs).borrow().as_ref() {
                 // Set timer to 32 bit and prescalar to 4
                 p.TIMER0.bitmode.write(|w| w.bitmode()._32bit());
                 p.TIMER0.prescaler.write(|w| unsafe { w.prescaler().bits(4) });
@@ -29,6 +29,21 @@ impl Timer {
                 p.TIMER0.tasks_start.write(|w| unsafe { w.bits(1) });
             }
         });
+    }
 
+    pub fn pause() {
+
+    }
+
+    pub fn resume() {
+
+    }
+
+    pub fn clear() {
+
+    }
+
+    pub fn clear_event() {
+        
     }
 }
