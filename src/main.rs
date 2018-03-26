@@ -113,11 +113,8 @@ fn main() {
     board.led_on(1);
     os_switch();
 }
-<<<<<<< HEAD
-=======
 
 
 //The intterupts need to be enabled here
 //TODO move these to a library
 interrupt!(GPIOTE, Interrupt::GPIOTE_IRQHandler);
->>>>>>> feature_gpiote_interrupts
