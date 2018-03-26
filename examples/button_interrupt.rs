@@ -3,9 +3,8 @@
 #![no_std]
 #[macro_use(interrupt)]
 
-#[macro_use]
 
-extern crate nrf51;
+extern crate nrf51; 
 //extern crate nrf51_hal;
 extern crate cortex_m;
 extern crate cortex_m_semihosting;
@@ -22,12 +21,12 @@ use core::fmt::Write;
 static HSTDOUT: Mutex<RefCell<Option<HStdout>>> = Mutex::new(RefCell::new(None));
 static PERIPH: Mutex<RefCell<Option<nrf51::Peripherals>>> = Mutex::new(RefCell::new(None));
 
-pub static LEDS: [Led; 4] = [
+/*pub static LEDS: [Led; 4] = [
     Led { i: 21 }, 
     Led { i: 22 }, 
     Led { i: 23 }, 
     Led { i: 24 }
-    ];
+    ];*/
 
 pub static BUTTONS: [Button; 4] = [
     Button { i: 17 }, 
@@ -63,13 +62,13 @@ fn main() {
 }
 
 pub struct Board {
-
+    LEDS: [Led; 4],
 }
 
 impl Board {
     
 
-    fn new() -> Self {
+    fn new(&self) -> Self {
 
         // no one can interrupt is when we're intializing the board
         cortex_m::interrupt::free(|cs| {
@@ -83,7 +82,7 @@ impl Board {
             // initializes interrupts
             let mut cp = cortex_m::Peripherals::take().unwrap();
 
-                //enable interrupts
+            //enable cpu interrupts
             cp.NVIC.enable(nrf51::Interrupt::GPIOTE);
             cp.NVIC.clear_pending(nrf51::Interrupt::GPIOTE);
             
@@ -94,13 +93,20 @@ impl Board {
         });
 
         //buttons.setup();
-        Led::init();
-        LEDS[0].on();
+
+        self.LEDS = [
+                    Led { i: 21 }, 
+                    Led { i: 22 }, 
+                    Led { i: 23 }, 
+                    Led { i: 24 }
+                ];
+
+        Led::init(&LEDS);
         Button::init();
 
 
         Board {
-   
+                LEDS: self.LEDS
         }
     }
 }
@@ -111,7 +117,7 @@ pub struct Led {
 }
 
 impl Led {
-    fn init() {
+    fn init(&LEDS) {
         cortex_m::interrupt::free(|cs| {
             if let Some(p) = PERIPH.borrow(cs).borrow().as_ref() {
                 
@@ -144,15 +150,6 @@ impl Led {
             }
         });
     }
-
-    fn toggle(&self) {
-        cortex_m::interrupt::free(|cs| {
-            if let Some(p) = PERIPH.borrow(cs).borrow().as_ref() {
-                    self.off();
-            }
-        });
-    }
-
 }
 
 
@@ -182,6 +179,8 @@ impl Button {
                             });
                 }
 
+                
+
                 p.GPIOTE.config[0].write(|w| unsafe { w.mode().event().psel().bits(17).polarity().lo_to_hi()});
                 p.GPIOTE.intenset.write(|w| w.in0().set_bit());
                 p.GPIOTE.events_in[0].write(|w| unsafe { w.bits(0) });
@@ -198,10 +197,6 @@ impl Button {
                 p.GPIOTE.intenset.write(|w| w.in3().set_bit());
                 p.GPIOTE.events_in[3].write(|w| unsafe { w.bits(0) });
             }
-
-
-            LEDS[1].on();
-
         });
 
         
