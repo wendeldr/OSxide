@@ -115,5 +115,6 @@ fn main() {
 }
 
 
-// For some reason I can only hit this in the main file
+//The intterupts need to be enabled here
+//TODO move these to a library
 interrupt!(GPIOTE, Interrupt::GPIOTE_IRQHandler);

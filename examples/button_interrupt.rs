@@ -179,6 +179,8 @@ impl Button {
                             });
                 }
 
+                
+
                 p.GPIOTE.config[0].write(|w| unsafe { w.mode().event().psel().bits(17).polarity().lo_to_hi()});
                 p.GPIOTE.intenset.write(|w| w.in0().set_bit());
                 p.GPIOTE.events_in[0].write(|w| unsafe { w.bits(0) });

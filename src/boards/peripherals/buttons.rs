@@ -17,6 +17,7 @@ impl Button {
                 
                 //configure pins in pull up input mode
                 //todo change this to a macro?
+                let mut i: usize = 0;
                 for button in &BUTTONS {
                     p.GPIO.pin_cnf[button.i].write(|w| {
                                 w.dir()
@@ -30,30 +31,16 @@ impl Button {
                                     .input()
                                     .connect()
                             });
+
+                    p.GPIOTE.config[i].write(|w| unsafe { w.mode().event().psel().bits(button.i as u8).polarity().lo_to_hi()});
+                    p.GPIOTE.events_in[i].write(|w| unsafe { w.bits(0) });
+                    i += 1;
                 }
 
-
-                /*
-                    TODO FIX ME
-                    These set the peripheral to interrupt
-                    these should just be looped over like the configurations
-
-                */
-                p.GPIOTE.config[0].write(|w| unsafe { w.mode().event().psel().bits(17).polarity().lo_to_hi()});
                 p.GPIOTE.intenset.write(|w| w.in0().set_bit());
-                p.GPIOTE.events_in[0].write(|w| unsafe { w.bits(0) });
-
-                p.GPIOTE.config[1].write(|w| unsafe { w.mode().event().psel().bits(18).polarity().lo_to_hi()});
                 p.GPIOTE.intenset.write(|w| w.in1().set_bit());
-                p.GPIOTE.events_in[1].write(|w| unsafe { w.bits(0) });
-
-                p.GPIOTE.config[2].write(|w| unsafe { w.mode().event().psel().bits(19).polarity().lo_to_hi()});
                 p.GPIOTE.intenset.write(|w| w.in2().set_bit());
-                p.GPIOTE.events_in[2].write(|w| unsafe { w.bits(0) });
-
-                p.GPIOTE.config[3].write(|w| unsafe { w.mode().event().psel().bits(20).polarity().lo_to_hi()});
                 p.GPIOTE.intenset.write(|w| w.in3().set_bit());
-                p.GPIOTE.events_in[3].write(|w| unsafe { w.bits(0) });
             }
         });
     }

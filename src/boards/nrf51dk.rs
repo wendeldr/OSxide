@@ -7,10 +7,8 @@ extern crate cortex_m_rt;
 
 use boards::board::Board;
 use cortex_m_semihosting::hio::{HStdout};
-use nrf51::{GPIOTE};
 
-use cortex_m::interrupt::{self, Mutex};
-use cortex_m::asm::bkpt;
+use cortex_m::interrupt::{Mutex};
 
 use core::cell::RefCell;
 use core::fmt::Write;
