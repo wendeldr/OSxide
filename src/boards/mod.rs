@@ -5,6 +5,8 @@ pub mod print;
 pub mod peripherals;
 
 pub mod interrupt;
+
+pub use ::Semaphore;
 /* 
     TODO fix this
     This exposes a statically assigned singleton for maniuplating

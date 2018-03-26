@@ -4,6 +4,8 @@ use cortex_m;
 
 use boards::nrf51dk::PERIPH;
 
+use Semaphore;
+
 pub struct Interrupt {
 
 }
@@ -13,7 +15,7 @@ impl Interrupt {
     #[allow(non_snake_case)]
     pub fn GPIOTE_IRQHandler() {
         cortex_m::interrupt::free(|cs| {
-            if let Some(p) = PERIPH.borrow(cs).borrow().as_ref() {
+            if let Some(p) = PERIPH.borrow(_cs).borrow().as_ref() {
 
                 // TODO we should be referencing the buttons array
                 
@@ -24,7 +26,7 @@ impl Interrupt {
 
                      p.GPIOTE.events_in[i].write(|w| unsafe { w.bits(0) });
                 }
-                bkpt();
+                //bkpt();
 
             }
         });
