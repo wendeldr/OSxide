@@ -41,15 +41,15 @@ impl Led {
     pub fn off(&self) {
         cortex_m::interrupt::free(|cs| {
             if let Some(p) = PERIPH.borrow(cs).borrow().as_ref() {
+
                 p.GPIO.outset.write(|w| unsafe { w.bits(1 << self.i) });
             }
         });
     }
 
-    fn toggle(&self) {
+    pub fn toggle(&self) {
         cortex_m::interrupt::free(|cs| {
-            if let Some(_p) = PERIPH.borrow(cs).borrow().as_ref() {
-                    self.off();
+            if let Some(p) = PERIPH.borrow(cs).borrow().as_ref() {
             }
         });
     }
