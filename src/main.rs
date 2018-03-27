@@ -113,8 +113,8 @@ pub fn os_idle_task(_: Option<Semaphore>) {
         print("idling");
 
         unsafe {
-            if let Some(ref sem) = OS_SEM {
-                os_post(sem.clone());
+            if let Some(_) = OS_SEM {
+                os_yeild()
             }
         }
     }
