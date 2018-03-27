@@ -14,7 +14,7 @@ extern crate nrf51;
 extern crate cortex_m;
 extern crate cortex_m_semihosting;
 extern crate cortex_m_rt;
-//use cortex_m::asm::bkpt;
+use cortex_m::asm::bkpt;
 
 // INTERNAL MODS
 //mod chips;
@@ -110,7 +110,7 @@ pub fn os_yeild() {
 
 pub fn os_idle_task(_: Option<Semaphore>) {
     loop {
-        print("idling");
+        //print("idling");
 
         unsafe {
             if let Some(_) = OS_SEM {
