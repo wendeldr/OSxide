@@ -12,4 +12,7 @@ pub trait Board {
 
      /* Turns off the led specified by i */
      fn led_off(&self, i: usize);
+
+     /* Toggles the led specified by i */
+     fn led_toggle(&self, i: usize);
 }

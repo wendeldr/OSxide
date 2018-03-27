@@ -22,7 +22,9 @@ extern crate cortex_m_rt;
 mod boards;
 //use boards::interrupt;
 use boards::board::{Board};
+use boards::print::{print};
 use boards::nrf51dk::{Nrf51dk};
+use boards::nrf51dk::PERIPH;
 use boards::interrupt::Interrupt;
 
 mod tasks;
@@ -51,7 +53,7 @@ const NUM_TASKS: usize = 4;
 static mut OS_SEM: Option<Semaphore> = None;
 static mut CURR_TID: usize = NUM_TASKS - 1;
 static mut OS_TASKS: [TaskControlBlock; NUM_TASKS] = [
-    TaskControlBlock { sem: None, task: post_b1_task::post_b1 },
+    TaskControlBlock { sem: None, task: os_idle_task },
     TaskControlBlock { sem: None, task: task1::task1 },
     TaskControlBlock { sem: None, task: task2::task2 },
     TaskControlBlock { sem: None, task: task3::task3 }
@@ -107,14 +109,48 @@ pub fn os_yeild() {
     return os_switch();
 }
 
+pub fn os_idle_task(_: Option<Semaphore>) {
+    loop {
+        print("idling");
+    }
+}
+
+pub fn post_button_sem(button_num: usize) {
+    let button_sems = [
+        Semaphore::Button1,
+        Semaphore::Button2,
+        Semaphore::Button3,
+        Semaphore::Button4
+    ];
+
+    os_post(button_sems[button_num].clone());
+}
+
 fn main() {
     let board: Nrf51dk = Nrf51dk::new();
     board.init();
-    board.led_on(1);
     os_switch();
 }
 
 
 //The intterupts need to be enabled here
 //TODO move these to a library
-interrupt!(GPIOTE, Interrupt::GPIOTE_IRQHandler);
+interrupt!(GPIOTE, GPIOTE_IRQHandler);
+
+#[allow(non_snake_case)]
+fn GPIOTE_IRQHandler() {
+    cortex_m::interrupt::free(|cs| {
+        if let Some(p) = PERIPH.borrow(cs).borrow().as_ref() {
+
+            // TODO we should be referencing the buttons array
+            for i in 0..4 {
+                let button = p.GPIOTE.events_in[i].read().bits() != 0;
+                if button {
+                    post_button_sem(i)
+                }
+
+                p.GPIOTE.events_in[i].write(|w| unsafe { w.bits(0) });
+            }
+        }
+    });
+}

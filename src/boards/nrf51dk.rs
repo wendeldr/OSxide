@@ -93,4 +93,8 @@ impl Board for Nrf51dk {
     fn led_off(&self, i: usize) {
         LEDS[i].off();
     }
+    
+    fn led_toggle(&self, i: usize) {
+        LEDS[i].toggle();
+    }
 }

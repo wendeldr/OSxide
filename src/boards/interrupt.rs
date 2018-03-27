@@ -3,6 +3,7 @@ use cortex_m::asm::bkpt;
 use cortex_m;
 
 use boards::nrf51dk::PERIPH;
+use boards::print::{print};
 
 pub struct Interrupt {
 
@@ -19,8 +20,10 @@ impl Interrupt {
                 
                 for i in 0..4 {
                      let button = p.GPIOTE.events_in[i].read().bits() != 0;
-                     
-                     /* DO something*/
+
+                     if button {
+                        print("button");
+                     }
 
                      p.GPIOTE.events_in[i].write(|w| unsafe { w.bits(0) });
                 }
