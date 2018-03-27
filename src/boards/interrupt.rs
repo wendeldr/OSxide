@@ -48,4 +48,34 @@ impl Interrupt {
             bkpt();
         });
     }
+
+    #[allow(non_snake_case)]
+    pub fn TIMER1_IRQHandler() {
+        cortex_m::interrupt::free(|_cs| {
+                /*Do Something*/
+
+            unsafe {
+                // clear the register
+                (*nrf51::TIMER1::ptr()).tasks_clear.write(|w| w.bits(1));
+                // clear the event
+                (*nrf51::TIMER1::ptr()).events_compare[1].write(|w| w.bits(0));
+            }
+            bkpt();
+        });
+    }
+
+    #[allow(non_snake_case)]
+    pub fn TIMER2_IRQHandler() {
+        cortex_m::interrupt::free(|_cs| {
+                /*Do Something*/
+
+            unsafe {
+                // clear the register
+                (*nrf51::TIMER2::ptr()).tasks_clear.write(|w| w.bits(1));
+                // clear the event
+                (*nrf51::TIMER2::ptr()).events_compare[2].write(|w| w.bits(0));
+            }
+            bkpt();
+        });
+    }
 }

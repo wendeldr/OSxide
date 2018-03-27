@@ -119,3 +119,4 @@ fn main() {
 //TODO move these to a library
 interrupt!(GPIOTE, Interrupt::GPIOTE_IRQHandler);
 interrupt!(TIMER0, Interrupt::TIMER0_IRQHandler);
+interrupt!(TIMER2, Interrupt::TIMER2_IRQHandler);

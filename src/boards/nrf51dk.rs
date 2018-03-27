@@ -68,32 +68,28 @@ impl Nrf51dk {
             cp.NVIC.clear_pending(nrf51::Interrupt::GPIOTE);
             cp.NVIC.enable(nrf51::Interrupt::TIMER0);
             cp.NVIC.clear_pending(nrf51::Interrupt::TIMER0);
-
+         
             
 
             let p = nrf51::Peripherals::take().unwrap(); // todo don't unwrap
             // lets borrow Peripherals
-            let timer = Timer::new(0);
 
-            let delay: u32 = 5 * 1000000; // five second delay
-            timer.init(delay, 1000000);
-            timer.resume();
 
-            //timer.init(1000000);
 
             *PERIPH.borrow(cs).borrow_mut() = Some(p);
 
         });
 
+        let timer0 = Timer::new(0);
+
+        let delay: u32 = 5 * 1000000; // five second delay
+        timer0.init(delay, 1000000);
+        timer0.start();
+
         Led::init();
         Button::init();
 
-        let delay: u32 = 2 * 1000000; // five second delay
 
-        
-
-        //Timer::init(delay);
-    
 
         //TODO not sure if this is necessary
         Nrf51dk{ }
