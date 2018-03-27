@@ -3,6 +3,7 @@ use cortex_m::asm::bkpt;
 use cortex_m;
 
 use nrf51;
+
 use boards::nrf51dk::PERIPH;
 use boards::print::{print};
 
@@ -44,6 +45,8 @@ impl Interrupt {
             }
         });
     }
+
+    // TODO timers should be using the new timer struct
 
     #[allow(non_snake_case)]
     pub fn TIMER0_IRQHandler() {
