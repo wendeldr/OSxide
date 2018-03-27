@@ -25,7 +25,6 @@ use boards::board::{Board};
 use boards::print::{print};
 use boards::nrf51dk::{Nrf51dk};
 use boards::nrf51dk::PERIPH;
-use boards::interrupt::Interrupt;
 
 mod tasks;
 
@@ -100,7 +99,7 @@ pub fn os_wait(sem: Semaphore) {
 pub fn os_post(sem: Semaphore) {
     // TODO should this be critical?
     unsafe {
-        OS_SEM = Some(sem)
+        OS_SEM = Some(sem);
     }
     os_yeild();
 }
@@ -112,10 +111,16 @@ pub fn os_yeild() {
 pub fn os_idle_task(_: Option<Semaphore>) {
     loop {
         print("idling");
+
+        unsafe {
+            if let Some(ref sem) = OS_SEM {
+                os_post(sem.clone());
+            }
+        }
     }
 }
 
-pub fn post_button_sem(button_num: usize) {
+pub fn set_os_button_sem(button_num: usize) {
     let button_sems = [
         Semaphore::Button1,
         Semaphore::Button2,
@@ -123,7 +128,9 @@ pub fn post_button_sem(button_num: usize) {
         Semaphore::Button4
     ];
 
-    os_post(button_sems[button_num].clone());
+    unsafe {
+        OS_SEM = Some(button_sems[button_num].clone());
+    }
 }
 
 fn main() {
@@ -139,14 +146,17 @@ interrupt!(GPIOTE, GPIOTE_IRQHandler);
 
 #[allow(non_snake_case)]
 fn GPIOTE_IRQHandler() {
+    print("button pressed");
+
     cortex_m::interrupt::free(|cs| {
         if let Some(p) = PERIPH.borrow(cs).borrow().as_ref() {
 
             // TODO we should be referencing the buttons array
             for i in 0..4 {
                 let button = p.GPIOTE.events_in[i].read().bits() != 0;
+
                 if button {
-                    post_button_sem(i)
+                    set_os_button_sem(i);
                 }
 
                 p.GPIOTE.events_in[i].write(|w| unsafe { w.bits(0) });
