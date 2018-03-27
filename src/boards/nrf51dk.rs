@@ -69,6 +69,14 @@ impl Nrf51dk {
 
             let p = nrf51::Peripherals::take().unwrap(); // todo don't unwrap
             // lets borrow Peripherals
+            let timer = Timer::new(0);
+
+            let delay: u32 = 5 * 1000000; // five second delay
+            timer.init(delay, 1000000);
+            timer.resume();
+
+            //timer.init(1000000);
+
             *PERIPH.borrow(cs).borrow_mut() = Some(p);
 
         });
@@ -77,7 +85,11 @@ impl Nrf51dk {
         Button::init();
 
         let delay: u32 = 2 * 1000000; // five second delay
-        Timer::init(delay);
+
+        
+
+        //Timer::init(delay);
+    
 
         //TODO not sure if this is necessary
         //Nrf51dk{ interrupt: Interrupt::new() }
