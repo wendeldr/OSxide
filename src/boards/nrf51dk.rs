@@ -76,10 +76,12 @@ impl Nrf51dk {
 
         });
 
-        let timer0 = Timer::new(0);
+
+        // timer0 with a frequency of 1000000
+        let timer0 = Timer::new(0, 1000000);
 
         let delay: u32 = 5 * 1000000; // five second delay
-        timer0.init(delay, 1000000);
+        timer0.init(delay);
         timer0.start();
 
         Led::init();
