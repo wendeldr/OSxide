@@ -5,21 +5,23 @@ use nrf51::{self, timer0};
 #[derive(Clone, Copy)]
 pub struct Timer {
     timer: *const timer0::RegisterBlock,
+    i: usize
 }
 
 impl Timer {
 
-    pub fn new(timer_choice: u8) -> Timer {
+    pub fn new(i: usize) -> Timer {
 
-        let timer = match timer_choice {
+        let timer = match i {
             0 => nrf51::TIMER0::ptr(),
             1 => nrf51::TIMER1::ptr(),
             2 => nrf51::TIMER2::ptr(),
-            _ => nrf51::TIMER0::ptr(),
+            _ => panic!("Invalid Timer: {}", i),
         };
 
         Timer {
-            timer
+            timer,
+            i,
         }
     }
 
@@ -47,9 +49,10 @@ impl Timer {
                 //Set the Timer intent
                 (*self.timer).intenset.write(|w| w.compare0().set());
 
-                (*self.timer).events_compare[0].write(|w| w.bits(0));
+                // self.i contains the config iterator
+                (*self.timer).events_compare[self.i].write(|w| w.bits(0));
                 /* Program counter compare register with value */
-                (*self.timer).cc[0].write(|w| w.bits(us) );
+                (*self.timer).cc[self.i].write(|w| w.bits(us) );
             }
         });
 
@@ -58,6 +61,9 @@ impl Timer {
 
     }
 
+    pub fn start(&self) {
+        self.resume();
+    }
 
     pub fn resume(&self) {
         cortex_m::interrupt::free(|_cs| {
@@ -86,7 +92,7 @@ impl Timer {
     pub fn clear_event(&self) {
         cortex_m::interrupt::free(|_cs| {
             unsafe {
-                (*self.timer).events_compare[0].write(|w| w.bits(0));
+                (*self.timer).events_compare[self.i].write(|w| w.bits(0));
             }
         });
     }
