@@ -17,6 +17,8 @@ use core::fmt::Write;
 use boards::peripherals::leds::Led;
 use boards::peripherals::buttons::Button;
 
+use boards::interrupt::{Interrupt};
+
 
 pub static HSTDOUT: Mutex<RefCell<Option<HStdout>>> = Mutex::new(RefCell::new(None));
 pub static PERIPH: Mutex<RefCell<Option<nrf51::Peripherals>>> = Mutex::new(RefCell::new(None));
@@ -44,13 +46,13 @@ pub static BUTTONS: [Button; 4] = [
  
 
 pub struct Nrf51dk {
-
+    pub interrupt: Interrupt
 }
 
 
 impl Nrf51dk {
     // What to do when the board comes up
-    pub fn init(&self) -> Self {
+    pub fn init(&self) {
         cortex_m::interrupt::free(|cs| {
 
             let hstdout = HSTDOUT.borrow(cs);
@@ -64,7 +66,6 @@ impl Nrf51dk {
             let mut cp = cortex_m::Peripherals::take().unwrap();
             cp.NVIC.enable(nrf51::Interrupt::GPIOTE);
             cp.NVIC.clear_pending(nrf51::Interrupt::GPIOTE);
-            
 
             let p = nrf51::Peripherals::take().unwrap(); // todo don't unwrap
             // lets borrow Peripherals
@@ -76,14 +77,14 @@ impl Nrf51dk {
         Button::init();
 
         //TODO not sure if this is necessary
-        Nrf51dk{ }
+        //Nrf51dk{ interrupt: Interrupt::new() }
 
     }
 }
 
 impl Board for Nrf51dk {
     fn new( ) -> Nrf51dk {
-        Nrf51dk { }
+        Nrf51dk { interrupt: Interrupt::new() }
     }
 
     fn led_on(&self, i: usize) {

@@ -21,10 +21,11 @@ use cortex_m::asm::bkpt;
 
 mod boards;
 //use boards::interrupt;
-use boards::board::{Board};
-use boards::print::{print};
+//use boards::board::{Board};
+//use boards::print::{print};
 use boards::nrf51dk::{Nrf51dk};
 use boards::nrf51dk::PERIPH;
+use boards::interrupt::{Interrupt};
 
 mod tasks;
 
@@ -57,6 +58,8 @@ static mut OS_TASKS: [TaskControlBlock; NUM_TASKS] = [
     TaskControlBlock { sem: None, task: task2::task2 },
     TaskControlBlock { sem: None, task: task3::task3 }
 ];
+
+static mut BOARD: Nrf51dk = Nrf51dk { interrupt: Interrupt { pending_interrupt: None }};
 
 
 // OS OPERATIONS
@@ -110,57 +113,37 @@ pub fn os_yeild() {
 
 pub fn os_idle_task(_: Option<Semaphore>) {
     loop {
-        //print("idling");
-
         unsafe {
-            if let Some(_) = OS_SEM {
-                os_yeild()
+            if let Some(interrupt) = BOARD.interrupt.consume_if_pending_interrupt() {
+                let button_sems = [
+                    Semaphore::Button1,
+                    Semaphore::Button2,
+                    Semaphore::Button3,
+                    Semaphore::Button4
+                ];
+
+                return os_post(button_sems[interrupt as usize].clone());
             }
         }
     }
 }
 
-pub fn set_os_button_sem(button_num: usize) {
-    let button_sems = [
-        Semaphore::Button1,
-        Semaphore::Button2,
-        Semaphore::Button3,
-        Semaphore::Button4
-    ];
-
-    unsafe {
-        OS_SEM = Some(button_sems[button_num].clone());
-    }
-}
-
 fn main() {
-    let board: Nrf51dk = Nrf51dk::new();
-    board.init();
+    //let board: Nrf51dk = Nrf51dk::new();
+    //board.init();
+    unsafe {
+        BOARD.init();
+    }
     os_switch();
 }
 
 
 //The intterupts need to be enabled here
 //TODO move these to a library
-interrupt!(GPIOTE, GPIOTE_IRQHandler);
+interrupt!(GPIOTE, interrupt_handler);
 
-#[allow(non_snake_case)]
-fn GPIOTE_IRQHandler() {
-    print("button pressed");
-
-    cortex_m::interrupt::free(|cs| {
-        if let Some(p) = PERIPH.borrow(cs).borrow().as_ref() {
-
-            // TODO we should be referencing the buttons array
-            for i in 0..4 {
-                let button = p.GPIOTE.events_in[i].read().bits() != 0;
-
-                if button {
-                    set_os_button_sem(i);
-                }
-
-                p.GPIOTE.events_in[i].write(|w| unsafe { w.bits(0) });
-            }
-        }
-    });
+fn interrupt_handler() {
+    unsafe {
+        BOARD.interrupt.GPIOTE_IRQHandler();
+    }
 }
