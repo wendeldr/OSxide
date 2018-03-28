@@ -14,23 +14,13 @@ extern crate nrf51;
 extern crate cortex_m;
 extern crate cortex_m_semihosting;
 extern crate cortex_m_rt;
-//use cortex_m::asm::bkpt;
 
 // INTERNAL MODS
-//mod chips;
-
 mod boards;
-//use boards::interrupt;
-//use boards::board::{Board};
-//use boards::print::{print};
 use boards::nrf51dk::{Nrf51dk};
-use boards::nrf51dk::PERIPH;
 use boards::interrupt::{Interrupt};
 
 mod tasks;
-
-
-
 use tasks::*;
 
 

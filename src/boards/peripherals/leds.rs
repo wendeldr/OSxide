@@ -50,6 +50,14 @@ impl Led {
     pub fn toggle(&self) {
         cortex_m::interrupt::free(|cs| {
             if let Some(p) = PERIPH.borrow(cs).borrow().as_ref() {
+                let state: bool = (p.GPIO.in_.read().bits() & (1 << self.i) == 0);
+
+                if state {
+                    self.off();
+                }  else {
+                    self.on();
+                }
+
             }
         });
     }

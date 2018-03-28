@@ -9,7 +9,7 @@ pub fn task2(maybe_sem: Option<Semaphore>) {
         print("semaphore from 2");
         let board: Nrf51dk = Nrf51dk::new();
         match sem {
-            Semaphore::Button2 => board.led_on(1),
+            Semaphore::Button2 => board.led_toggle(1),
             _ => ()
         }
     }
