@@ -128,6 +128,7 @@ pub fn os_idle_task(_: Option<Semaphore>) {
     }
 }
 
+
 fn main() {
     //let board: Nrf51dk = Nrf51dk::new();
     //board.init();
