@@ -33,7 +33,7 @@ impl Interrupt {
                      let button = p.GPIOTE.events_in[i].read().bits() != 0;
 
                      if button {
-                        print("button pressed");
+                        //print("button pressed");
                         self.set_button_pending_interrupt(i);
                      }
 
