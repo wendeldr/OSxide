@@ -55,12 +55,6 @@ impl Nrf51dk {
     pub fn init(&self) {
         cortex_m::interrupt::free(|cs| {
 
-            let hstdout = HSTDOUT.borrow(cs);
-
-            if let Some(hstdout) = hstdout.borrow_mut().as_mut() {
-                writeln!(*hstdout, "NRF51Dk Initialization").ok();
-            }
-
             /* Initilize the interrupts on cpu*/
             // TODO should the device structs handle these?
             let mut cp = cortex_m::Peripherals::take().unwrap();
