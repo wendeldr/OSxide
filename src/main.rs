@@ -21,12 +21,8 @@ extern crate cortex_m_rt;
 mod boards;
 use boards::nrf51dk::{Nrf51dk};
 use boards::interrupt::{Interrupt};
-use boards::board::Board;
 mod tasks;
 use tasks::*;
-
-
-use cortex_m::asm::bkpt;
 
 
 // TYPE DEFS

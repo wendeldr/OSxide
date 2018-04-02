@@ -1,26 +1,15 @@
-
-extern crate nrf51;
-extern crate cortex_m;
-extern crate cortex_m_semihosting;
-extern crate cortex_m_rt;
-
-
-use boards::board::Board;
+use nrf51;
+use cortex_m;
+use cortex_m::interrupt::{Mutex};
 use cortex_m_semihosting::hio::{HStdout};
 
-use cortex_m::interrupt::{Mutex};
-
 use core::cell::RefCell;
-//use core::fmt::Write;
 
 //mod peripherals;
+use boards::board::Board;
 use boards::peripherals::leds::Led;
 use boards::peripherals::buttons::Button;
 use boards::peripherals::timers::Timer;
-//use boards::peripherals::gpio::Led_S;
-
-
-use boards::interrupt::{Interrupt};
 
 
 pub static HSTDOUT: Mutex<RefCell<Option<HStdout>>> = Mutex::new(RefCell::new(None));
@@ -57,19 +46,9 @@ pub struct Nrf51dk {
 
 impl Nrf51dk {
     // What to do when the board comes up
-
-/*
     pub fn new() -> Nrf51dk {
-
-        let Leds = [Led_S::new(21), 
-                    Led_S::new(22), 
-                    Led_S::new(23), 
-                    Led_S::new(24)
-                    ];
-
-        //TODO not sure if this is necessary
-        Nrf51dk{ Leds: Leds }
-    }*/
+        Nrf51dk { }
+    }
 
 
     pub fn init(&self) {
@@ -92,6 +71,7 @@ impl Nrf51dk {
         // timer0 with a frequency of 1000000
         let timer0 = Timer::new(0, 1000000);
 
+        //Lets use timer0 as a systick
         //let delay: u32 = 5 * 1000000; // five second delay
         let delay: u32 = 1000;
         timer0.init(delay);

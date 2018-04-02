@@ -1,7 +1,6 @@
 
 use nrf51;
 use cortex_m;
-use cortex_m::asm::bkpt;
 
 
 pub struct Gpio {

@@ -5,7 +5,6 @@ use cortex_m;
 use nrf51;
 
 use boards::nrf51dk::PERIPH;
-use boards::print::{print};
 use Kernel;
 use boards::peripherals::timers::Timer;
 
