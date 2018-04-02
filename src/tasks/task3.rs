@@ -9,7 +9,22 @@ pub fn task3(maybe_sem: Option<Semaphore>) {
         //print("semaphore from 3");
         let board: Nrf51dk = Nrf51dk::new();
         match sem {
-            Semaphore::Button3 => board.led_toggle(2),
+            Semaphore::Button3 => {
+                                    for _i in 0..4 {
+                                        board.led_toggle(0);
+                                        Kernel::os_sleep(200);
+                                        board.led_toggle(1);
+                                        board.led_toggle(0);
+                                        Kernel::os_sleep(200);
+                                        board.led_toggle(3);
+                                        board.led_toggle(1);
+                                        Kernel::os_sleep(200);
+                                        board.led_toggle(2);
+                                        board.led_toggle(3);
+                                        Kernel::os_sleep(200);
+                                        board.led_toggle(2);
+                                    }
+                                },
             _ => ()
         }
     }

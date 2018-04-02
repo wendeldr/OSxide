@@ -148,7 +148,8 @@ impl Kernel {
     pub fn os_sleep(delay: u32) {
         unsafe {
             
-            let target_time = OS_TIME + (delay * 1000); // TIME when we ented the function
+            // change to milliseconds instead of microseconds
+            let target_time = OS_TIME + (delay * 1000);
 
             // literally do nothing
             while OS_TIME <= target_time {
