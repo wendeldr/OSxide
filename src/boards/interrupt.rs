@@ -6,6 +6,8 @@ use nrf51;
 
 use boards::nrf51dk::PERIPH;
 use boards::print::{print};
+use Kernel;
+use boards::peripherals::timers::Timer;
 
 #[derive(PartialEq, Clone)]
 pub enum PendingInterrupt {
@@ -46,22 +48,7 @@ impl Interrupt {
         });
     }
 
-    // TODO timers should be using the new timer struct
 
-    #[allow(non_snake_case)]
-    pub fn TIMER0_IRQHandler() {
-        cortex_m::interrupt::free(|_cs| {
-                /*Do Something*/
-
-            unsafe {
-                // clear the register
-                (*nrf51::TIMER0::ptr()).tasks_clear.write(|w| w.bits(1));
-                // clear the event
-                (*nrf51::TIMER0::ptr()).events_compare[0].write(|w| w.bits(0));
-            }
-            bkpt();
-        });
-    }
 
     fn set_button_pending_interrupt(&mut self, button_index: usize) {
         let button_interrupts = [
@@ -87,6 +74,24 @@ impl Interrupt {
         });
 
         return maybe_interrupt;
+    }
+
+        // TODO timers should be using the new timer struct
+
+    #[allow(non_snake_case)]
+    pub fn TIMER0_IRQHandler(&self) {
+        cortex_m::interrupt::free(|_cs| {
+        
+            // Get an instance of timer 0
+            let timer0 = Timer::new(0, 1000000);
+
+            // update the current time
+            Kernel::os_update_time(timer0.get_value());
+            
+            // clear the registers
+            timer0.clear();
+            timer0.clear_event();
+        });
     }
     
     #[allow(non_snake_case)]

@@ -32,6 +32,7 @@ bare-metal = "0.1.1"
 vcell = "0.1.0"
 cast = { version = "0.2.2", default-features = false }
 
+
 [dependencies.cortex-m]
 version = "0.4.3"
 

@@ -2,7 +2,7 @@ use boards::board::Board;
 use boards::nrf51dk::{Nrf51dk};
 use boards::print::{print};
 use Semaphore;
-use os_wait;
+use Kernel;
 
 pub fn task3(maybe_sem: Option<Semaphore>) {
     if let Some(sem) = maybe_sem {
@@ -15,5 +15,5 @@ pub fn task3(maybe_sem: Option<Semaphore>) {
     }
 
     //print("now waiting from 3");
-    return os_wait(Semaphore::Button3);
+    return Kernel::os_wait(Semaphore::Button3);
 }

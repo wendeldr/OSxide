@@ -11,12 +11,13 @@ use cortex_m_semihosting::hio::{HStdout};
 use cortex_m::interrupt::{Mutex};
 
 use core::cell::RefCell;
-use core::fmt::Write;
+//use core::fmt::Write;
 
 //mod peripherals;
 use boards::peripherals::leds::Led;
 use boards::peripherals::buttons::Button;
 use boards::peripherals::timers::Timer;
+//use boards::peripherals::gpio::Led_S;
 
 
 use boards::interrupt::{Interrupt};
@@ -39,6 +40,8 @@ pub static LEDS: [Led; 4] = [
     Led { i: 24 }
     ];
 
+
+
 pub static BUTTONS: [Button; 4] = [
     Button { i: 17 }, 
     Button { i: 18 }, 
@@ -48,12 +51,27 @@ pub static BUTTONS: [Button; 4] = [
  
 
 pub struct Nrf51dk {
-    pub interrupt: Interrupt
+    //Leds: [Led_S; 4],
 }
 
 
 impl Nrf51dk {
     // What to do when the board comes up
+
+/*
+    pub fn new() -> Nrf51dk {
+
+        let Leds = [Led_S::new(21), 
+                    Led_S::new(22), 
+                    Led_S::new(23), 
+                    Led_S::new(24)
+                    ];
+
+        //TODO not sure if this is necessary
+        Nrf51dk{ Leds: Leds }
+    }*/
+
+
     pub fn init(&self) {
         cortex_m::interrupt::free(|cs| {
 
@@ -64,40 +82,34 @@ impl Nrf51dk {
             cp.NVIC.clear_pending(nrf51::Interrupt::GPIOTE);
             cp.NVIC.enable(nrf51::Interrupt::TIMER0);
             cp.NVIC.clear_pending(nrf51::Interrupt::TIMER0);
-         
-            
 
             let p = nrf51::Peripherals::take().unwrap(); // todo don't unwrap
             // lets borrow Peripherals
-
-
-
             *PERIPH.borrow(cs).borrow_mut() = Some(p);
 
         });
-
-
+    
         // timer0 with a frequency of 1000000
         let timer0 = Timer::new(0, 1000000);
 
-        let delay: u32 = 5 * 1000000; // five second delay
+        //let delay: u32 = 5 * 1000000; // five second delay
+        let delay: u32 = 1000;
         timer0.init(delay);
         timer0.start();
 
         Led::init();
         Button::init();
 
-
-
-        //TODO not sure if this is necessary
-        //Nrf51dk{ interrupt: Interrupt::new() }
-
     }
+
+
+
+
 }
 
 impl Board for Nrf51dk {
     fn new( ) -> Nrf51dk {
-        Nrf51dk { interrupt: Interrupt::new() }
+        Nrf51dk {}
     }
 
     fn led_on(&self, i: usize) {

@@ -1,6 +1,7 @@
 pub mod buttons;
 pub mod leds;
 pub mod timers;
+pub mod gpio;
 
 /* 
     TODO fix this

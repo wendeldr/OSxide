@@ -4,9 +4,9 @@ use nrf51::{self, timer0};
 
 #[derive(Clone, Copy)]
 pub struct Timer {
-    timer: *const timer0::RegisterBlock,
-    prescaler: u8,
-    i: usize,
+    pub timer: *const timer0::RegisterBlock,
+    pub prescaler: u8,
+    pub i: usize,
 }
 
 impl Timer {
@@ -50,7 +50,6 @@ impl Timer {
                 (*self.timer).bitmode.write(|w| w.bitmode()._32bit());
                 //Set the Timer intent
                 (*self.timer).intenset.write(|w| w.compare0().set());
-
                 // self.i contains the config iterator
                 (*self.timer).events_compare[self.i].write(|w| w.bits(0));
                 /* Program counter compare register with value */
@@ -97,5 +96,19 @@ impl Timer {
                 (*self.timer).events_compare[self.i].write(|w| w.bits(0));
             }
         });
+    }
+
+    pub fn get_value(&self) -> u32 {
+        cortex_m::interrupt::free(|_cs| -> u32 {
+            
+            unsafe {
+                // capture the time value and store in cc
+                (*self.timer).tasks_capture[self.i].write(|w| w.bits(0));
+                 // return time passed
+                 (*self.timer).cc[self.i].read().bits()
+            }
+        })
+
+
     }
 }
