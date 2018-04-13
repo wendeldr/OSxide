@@ -25,6 +25,7 @@ This repository serves as a place for the documentation of the O<sup>s</sup>xide
 
 ## Abstract
 OSxide is a project that aims to create a real-time operating system (RTOS) utilizing Rust. By Creating a real time operating system in Rust, OSxide contributes embedded Rust code to the community at a time when the amount of public embedded Rust is extremely sparse. Writing the RTOS in Rust benefits from the secure and memory-safe paradigms that the language implements. This is contrary to the many embedded systems that have historically been written in C, which allows many of the unsafe behavior that Rust aims to prevent. In a time when embedded systems are becoming more relevant than ever, through various internet of things (iOT) platforms, it is important that measures are taken to allow for the construction of more secure embedded systems, and OSxide is towards these secure systems.
+
 	We have implemented OSxide, an RTOS written fully in Rust that runs on an NRF51 development kit. The RTOS encompasses a basic scheudler that allows for inter-task communication. Thus far, the tasks have interracted with peripherals that are built in to the development kit. Access to the peripherals is allowed through a hardware abstraction layer that was written by our team as well.
 
 ## Project Description
