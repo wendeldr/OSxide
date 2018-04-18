@@ -17,9 +17,9 @@ Table of Contents
 - xargo | https://github.com/japaric/xargo
 - OSxide | https://github.com/wendeldr/OSxide
 
-##Initial Setup
+## Initial Setup
 
-###Rust
+### Rust
 
 **Windows**: Download and install *rustup-init.exe* from the Rust website.
 
@@ -50,7 +50,7 @@ Requires Rust nightly to first be installed
 
 
 
-###OSxide
+### OSxide
 
 `git clone https://github.com/wendeldr/OSxide.git`
 
