@@ -35,3 +35,20 @@ A summary of the hours spent by each team member is given. A summary of the tota
 |Real Time Operating System Design         |   5   |
 |RTOS implementation (scheduler/tasks/etc.)|   9   |
 |**Total**                                 |   124 |
+
+### Dominic Farolino
+
+| Task                                     | hours |
+|------------------------------------------| -----:|
+|Research on previous work in embedded Rust|   11  |
+|Research in how to use Rust               |   6   |
+|Research on Real Time Operating Systems   |   7   |
+|Fall Design work                          |   10  |
+|Fall Documentation                        |   12  |
+|NR51DK R&D - Running Code on the Board    |   9   |
+|Embedded Rust Research                    |   9   |
+|Running Embedded Rust R&D                 |   12  |
+|Peripheral interaction R&D                |   11  |
+|Real Time Operating System Design         |   5   |
+|RTOS implementation (scheduler/tasks/etc.)|   8   |
+|**Total**                                 |   100 |
