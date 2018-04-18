@@ -1,16 +1,13 @@
 # User Interface Specification
 Table of Contents
 
-1. [Technologies Used](##Technologies Used)
+1. [Technologies Used](##Technologies-Used)
 
-2. [Initial Setup](##Use)
+2. [Initial Setup](##Initial-Setup)
 
 3. [Use](##Use)
 
-4. [To Setup A New Task](##To Setup A New Task)\
-
-   ​
-
+4. [To Setup A New Task](##To-Setup-A-New-Task)
 
 
 ## Technologies Used
@@ -20,9 +17,9 @@ Table of Contents
 - xargo | https://github.com/japaric/xargo
 - OSxide | https://github.com/wendeldr/OSxide
 
-##Initial Setup
+## Initial Setup
 
-###Rust
+### Rust
 
 **Windows**: Download and install *rustup-init.exe* from the Rust website.
 
@@ -53,7 +50,7 @@ Requires Rust nightly to first be installed
 
 
 
-###OSxide
+### OSxide
 
 `git clone https://github.com/wendeldr/OSxide.git`
 
