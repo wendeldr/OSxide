@@ -16,3 +16,4 @@ A summary of the hours spent by each team member is given. A summary of the tota
 |Peripheral interaction R&D                |   10  |
 |Real Time Operating System Design         |   9   |
 |RTOS implementation (scheduler/tasks/etc.)|   20  |
+|**Total**                                 |   123 |
