@@ -1,16 +1,13 @@
 # User Interface Specification
 Table of Contents
 
-1. [Technologies Used](##Technologies Used)
+1. [Technologies Used](##Technologies-Used)
 
-2. [Initial Setup](##Use)
+2. [Initial Setup](##Initial-Setup)
 
 3. [Use](##Use)
 
-4. [To Setup A New Task](##To Setup A New Task)\
-
-   ​
-
+4. [To Setup A New Task](##To-Setup-A-New-Task)
 
 
 ## Technologies Used
