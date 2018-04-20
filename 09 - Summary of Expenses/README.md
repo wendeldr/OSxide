@@ -3,4 +3,5 @@ A summary of the expenses
 
 | Item                                     | Cost |
 |------------------------------------------| -----:|
-|NRF51dk|   35 x 4   |
+|NRF51dk|   $35.00 x 4   |
+
