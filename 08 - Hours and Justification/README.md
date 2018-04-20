@@ -52,3 +52,21 @@ A summary of the hours spent by each team member is given. A summary of the tota
 |Real Time Operating System Design         |   5   |
 |RTOS implementation (scheduler/tasks/etc.)|   8   |
 |**Total**                                 |   100 |
+
+### Douglas Flick
+
+| Task                                       | hours |
+| ------------------------------------------ | ----: |
+| Research on previous work in embedded Rust |    18 |
+| Research in how to use Rust                |    12 |
+| Research on Real Time Operating Systems    |    15 |
+| Fall Design work                           |    20 |
+| Fall Documentation                         |     8 |
+| NR51DK R&D - Running Code on the Board     |    14 |
+| Embedded Rust Research                     |    15 |
+| Running Embedded Rust R&D                  |    15 |
+| Peripheral interaction R&D                 |    20 |
+| Real Time Operating System Design          |     5 |
+| RTOS implementation (scheduler/tasks/etc.) |     6 |
+| **Total**                                  |   148 |
+
